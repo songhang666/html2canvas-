@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>流下没有技术的眼泪</title>
+    <style>
+        * {
+            margin: 0 auto;
+            font-family: "PingFang SC";
+        }
+
+        .container {
+            margin: 0 auto;
+            width: 250px;
+        }
+
+        #content-box {
+            margin: 50px auto 20px auto;
+            width: 250px;
+            background-color: #fff;
+            border: 1px solid #fff;
+        }
+
+        .row {
+            position: relative;
+        }
+
+        #btn {
+            border: 0;
+            width: 100px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #009a61;
+            cursor: pointer;
+            padding: 10px 5px;
+            text-align: center;
+            box-sizing: border-box;
+            float: left;
+        }
+
+        .upload {
+            border: 0;
+            width: 100px;
+            border-radius: 5px;
+            color: #fff;
+            background: #009a61;
+            cursor: pointer;
+            padding: 10px 5px;
+            text-align: center;
+            box-sizing: border-box;
+            float: right;
+            cursor: pointer;
+        }
+
+        .clearfloat:after {
+            content: "";
+            height: 0;
+            clear: both;
+            visibility: hidden;
+            display: table-cell;
+        }
+
+        #imageChange {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100px;
+            height: 42px;
+            opacity: 0;
+            z-index: 233;
+            cursor: pointer;
+        }
+
+        #screen-box {
+            margin: 20px auto;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <div id="content-box">
+        <img id="image" style="width:100%" src="tears.jpg" alt="流下没有技术的眼泪">
+        <div contenteditable="true" class="write">
+            <span id="date">点我输入文字</span>
+        </div>
+    </div>
+    <div class="row clearfloat">
+        <a id="btn">生成啦</a>
+        <a class="upload">上传吧</a>
+        <input type="file" id="imageChange">
+    </div>
+
+    <div id="screen-box"></div>
+</div>
+<script src="html2canvas.js"></script>
+<script>
+    var btn = document.getElementById('btn');
+    var contentBox = document.getElementById('content-box');
+    var screenBox = document.getElementById('screen-box');
+
+    btn.onclick = function (event) {
+        html2canvas(contentBox, {
+            allowTain: true,
+            taintTest: true,
+            onrendered: function (canvas) {
+                canvas.id = "mycanvas";
+                var dataUrl = canvas.toDataURL('image/jpeg');
+                var newImg = document.createElement("img");
+                var tip = document.createElement("p");
+                tip.innerText = "长按图片分享或者保存";
+                newImg.src = dataUrl;
+                //清空元素
+                screenBox.innerHTML = '';
+                screenBox.appendChild(newImg);
+                screenBox.appendChild(tip);
+            }
+        })
+    }
+    //生成当前时间
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    var date = document.getElementById('date');
+    date.innerText = `${year}/${month}/${day}日 点我输入文字`;
+    //自定义上传图片
+    var image = document.getElementById('image');
+    var imageChange = document.getElementById('imageChange');
+
+    function readUrl(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                image.setAttribute('src', e.target.result)
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    imageChange.onchange = function () {
+        readUrl(this);
+    }
+</script>
+</body>
+
+</html>
